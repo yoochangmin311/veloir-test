@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퍼스널 퍼퓸 - Personal Perfume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            font-style: italic;
+        }
+
+        .quiz-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #4a5568;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .result-container {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .perfume-bottle {
+            width: 200px;
+            height: 300px;
+            margin: 0 auto 30px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .perfume-bottle:hover {
+            transform: scale(1.05);
+        }
+
+        .bottle-body {
+            width: 120px;
+            height: 200px;
+            background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+            border-radius: 15px 15px 25px 25px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .bottle-neck {
+            width: 40px;
+            height: 40px;
+            background: #d0d0d0;
+            margin: 0 auto;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .bottle-cap {
+            width: 60px;
+            height: 30px;
+            background: linear-gradient(145deg, #gold, #darkgoldenrod);
+            margin: 0 auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .bottle-liquid {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            height: 140px;
+            border-radius: 10px 10px 20px 20px;
+            opacity: 0.8;
+        }
+
+        .perfume-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .perfume-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .fragrance-notes {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .notes-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .notes-list {
+            font-style: italic;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">퍼스널 퍼퓸</h1>
+            <p class="subtitle">당신만의 특별한 향기를 찾아보세요</p>
+        </div>
+
+        <div id="userInfo" class="quiz-container">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #4a5568;">당신에 대해 알려주세요 ✨</h2>
+            <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; margin: 0 auto;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #4a5568;">이름</label>
+                    <input type="text" id="userName" placeholder="이름을 입력해주세요" style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; transition: border-color 0.3s ease;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #4a5568;">나이</label>
+                    <input type="number" id="userAge" placeholder="나이를 입력해주세요" min="1" max="100" style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; transition: border-color 0.3s ease;">
+                </div>
+                <button class="btn" onclick="startQuiz()" style="margin-top: 20px;">향수 찾기 시작하기 🌸</button>
+            </div>
+        </div>
+
+        <div id="quiz" class="quiz-container" style="display: none;">
+            <div class="question">
+                <h3>1. 🌸 꿈속에서 어떤 정원을 거닐고 있나요?</h3>
+                <div class="options">
+                    <div class="option" data-type="A">완벽하게 정돈된 프랑스식 정원을 걷고 있다</div>
+                    <div class="option" data-type="B">친구들과 함께 장미정원에서 차를 마시고 있다</div>
+                    <div class="option" data-type="C">무지개빛 열대정원에서 신나게 모험하고 있다</div>
+                    <div class="option" data-type="D">달빛 아래 신비로운 보라색 꽃밭을 홀로 거닐고 있다</div>
+                    <div class="option" data-type="E">평화로운 연꽃 연못가에서 고요히 명상하고 있다</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>2. ✨ 마법의 향수병을 발견했어요! 뚜껑을 열면?</h3>
+                <div class="options">
+                    <div class="option" data-type="A">세상 모든 것이 완벽하게 정리정돈된다</div>
+                    <div class="option" data-type="B">주변 사람들이 모두 행복한 미소를 짓는다</div>
+                    <div class="option" data-type="C">무지개 포털이 열려 신나는 모험이 시작된다</div>
+                    <div class="option" data-type="D">세상이 아름다운 예술작품으로 변한다</div>
+                    <div class="option" data-type="E">구름 위에서 평온하게 떠다니게 된다</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>3. ☕ 당신의 이상적인 카페는?</h3>
+                <div class="options">
+                    <div class="option" data-type="A">완벽하게 청결하고 메뉴가 명확한 미니멀 카페</div>
+                    <div class="option" data-type="B">홈메이드 쿠키 향이 나는 따뜻한 동네 카페</div>
+                    <div class="option" data-type="C">매일 새로운 원두를 선보이는 실험적인 카페</div>
+                    <div class="option" data-type="D">빈티지 소품과 재즈가 흐르는 감성 카페</div>
+                    <div class="option" data-type="E">조용한 서점카페에서 책과 커피향에 둘러싸여</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>4. 🌧️ 비 오는 일요일 오후, 당신은?</h3>
+                <div class="options">
+                    <div class="option" data-type="A">밀린 정리정돈과 다음 주 계획 세우기</div>
+                    <div class="option" data-type="B">사랑하는 사람들에게 안부 연락하기</div>
+                    <div class="option" data-type="C">새로운 취미나 온라인 강의 찾아보기</div>
+                    <div class="option" data-type="D">감성적인 음악 들으며 그림 그리거나 글쓰기</div>
+                    <div class="option" data-type="E">창가에서 빗소리 들으며 책 읽기</div>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>5. 🎁 친구가 향수를 선물해준다면?</h3>
+                <div class="options">
+                    <div class="option" data-type="A">깔끔하고 세련된 시트러스 계열을 바란다</div>
+                    <div class="option" data-type="B">따뜻하고 포근한 바닐라나 머스크 향을 원한다</div>
+                    <div class="option" data-type="C">상큼하고 활기찬 플로럴 프루티 향이 좋다</div>
+                    <div class="option" data-type="D">독특하고 개성있는 우디나 스파이시 향을 선호한다</div>
+                    <div class="option" data-type="E">은은하고 자연스러운 그린이나 파우더리 향이 좋다</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="calculateResult()" style="display: none;">나만의 향수 찾기</button>
+
+        <div id="result" class="result-container">
+            <div class="perfume-bottle" onclick="sprayPerfume()">
+                <div class="bottle-cap"></div>
+                <div class="bottle-neck"></div>
+                <div class="bottle-body">
+                    <div class="bottle-liquid" id="liquid"></div>
+                </div>
+            </div>
+            <h2 class="perfume-name" id="perfumeName"></h2>
+            <p class="perfume-description" id="perfumeDescription"></p>
+            <div class="fragrance-notes">
+                <div class="notes-title">향조</div>
+                <div class="notes-list" id="fragranceNotes"></div>
+            </div>
+            <button class="btn" onclick="restartQuiz()" style="margin-top: 30px;">다시 테스트하기</button>
+        </div>
+    </div>
+
+    <script>
+        let answers = [];
+        let userName = '';
+        let userAge = '';
+
+        function startQuiz() {
+            userName = document.getElementById('userName').value.trim();
+            userAge = document.getElementById('userAge').value.trim();
+            
+            if (!userName || !userAge) {
+                alert('이름과 나이를 모두 입력해주세요!');
+                return;
+            }
+            
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            document.querySelector('.btn[onclick="calculateResult()"]').style.display = 'block';
+        }
+
+        // 옵션 선택 처리
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('option')) {
+                const question = e.target.closest('.question');
+                const options = question.querySelectorAll('.option');
+                
+                // 같은 질문의 다른 옵션들 선택 해제
+                options.forEach(opt => opt.classList.remove('selected'));
+                
+                // 현재 옵션 선택
+                e.target.classList.add('selected');
+            }
+        });
+
+        function calculateResult() {
+            const questions = document.querySelectorAll('.question');
+            answers = [];
+            
+            questions.forEach(question => {
+                const selected = question.querySelector('.option.selected');
+                if (selected) {
+                    answers.push(selected.getAttribute('data-type'));
+                }
+            });
+            
+            if (answers.length < 5) {
+                alert('모든 질문에 답변해주세요!');
+                return;
+            }
+            
+            const result = getPerfumeResult(answers);
+            displayResult(result);
+        }
+
+        function getPerfumeResult(answers) {
+            const counts = {};
+            answers.forEach(answer => {
+                counts[answer] = (counts[answer] || 0) + 1;
+            });
+            
+            const mostCommon = Object.keys(counts).reduce((a, b) => 
+                counts[a] > counts[b] ? a : b
+            );
+            
+            const perfumes = {
+                A: {
+                    name: "클리어 엘레강스",
+                    description: `${userName}님은 깔끔하고 세련된 스타일을 추구하시는군요! 완벽주의적 성향과 정돈된 라이프스타일이 돋보입니다. 이 향수는 깨끗하고 모던한 시트러스 향으로 당신의 우아함을 완벽하게 표현해줄 거예요.`,
+                    notes: "베르가못, 레몬, 화이트머스크, 시더우드",
+                    color: "linear-gradient(145deg, #e3f2fd, #bbdefb)"
+                },
+                B: {
+                    name: "하트 워밍",
+                    description: `${userName}님은 따뜻한 마음의 소유자시네요! 사람들과의 관계를 소중히 여기고 포근한 분위기를 만드는 재능이 있어요. 이 향수는 달콤하고 편안한 향으로 당신의 따뜻함을 전해줄 거예요.`,
+                    notes: "바닐라, 캐시미어우드, 앰버, 화이트 플라워",
+                    color: "linear-gradient(145deg, #fff3e0, #ffcc80)"
+                },
+                C: {
+                    name: "어드벤처 블룸",
+                    description: `${userName}님은 활기차고 모험을 좋아하는 자유로운 영혼이시군요! 새로운 경험에 열려있고 긍정적인 에너지가 넘쳐요. 이 향수는 상큼하고 발랄한 향으로 당신의 역동적인 매력을 보여줄 거예요.`,
+                    notes: "핑크 자몽, 피치, 프리지아, 라이트 머스크",
+                    color: "linear-gradient(145deg, #fce4ec, #f8bbd9)"
+                },
+                D: {
+                    name: "아티스틱 소울",
+                    description: `${userName}님은 예술적 감성이 뛰어나고 독창적인 개성을 가지셨네요! 깊이 있는 사색과 아름다움에 대한 안목이 남다라요. 이 향수는 신비롭고 복합적인 향으로 당신의 예술적 면모를 드러낼 거예요.`,
+                    notes: "블랙커런트, 로즈, 패츌리, 인센스",
+                    color: "linear-gradient(145deg, #f3e5f5, #ce93d8)"
+                },
+                E: {
+                    name: "세레니티 가든",
+                    description: `${userName}님은 평온함을 추구하며 내면의 조화를 중시하시는군요! 자연을 사랑하고 고요한 순간들을 소중히 여기시네요. 이 향수는 은은하고 자연스러운 향으로 당신의 평화로운 에너지를 표현해줄 거예요.`,
+                    notes: "그린티, 재스민, 세이지, 화이트우드",
+                    color: "linear-gradient(145deg, #e8f5e8, #a5d6a7)"
+                }
+            };
+            
+            return perfumes[mostCommon] || perfumes.A;
+        }
+
+        function displayResult(result) {
+            document.getElementById('quiz').style.display = 'none';
+            document.querySelector('.btn[onclick="calculateResult()"]').style.display = 'none';
+            
+            document.getElementById('perfumeName').textContent = result.name;
+            document.getElementById('perfumeDescription').textContent = result.description;
+            document.getElementById('fragranceNotes').textContent = result.notes;
+            document.getElementById('liquid').style.background = result.color;
+            
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function sprayPerfume() {
+            const bottle = document.querySelector('.perfume-bottle');
+            bottle.style.transform = 'scale(1.1) rotate(5deg)';
+            
+            // 반짝이는 효과
+            const sparkles = document.createElement('div');
+            sparkles.innerHTML = '✨💫🌟';
+            sparkles.style.position = 'absolute';
+            sparkles.style.top = '50%';
+            sparkles.style.left = '50%';
+            sparkles.style.transform = 'translate(-50%, -50%)';
+            sparkles.style.fontSize = '2rem';
+            sparkles.style.animation = 'sparkle 1s ease-out forwards';
+            bottle.appendChild(sparkles);
+            
+            setTimeout(() => {
+                bottle.style.transform = '';
+                sparkles.remove();
+            }, 1000);
+        }
+
+        function restartQuiz() {
+            answers = [];
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('userName').value = '';
+            document.getElementById('userAge').value = '';
+            
+            // 모든 선택 초기화
+            document.querySelectorAll('.option.selected').forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+
+        // 반짝이는 애니메이션 CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+                50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8) translateY(-30px); }
+            }
+            
+            input:focus {
+                border-color: #667eea !important;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
